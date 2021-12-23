@@ -1,15 +1,29 @@
-from flask import Flask, Blueprint
-from .config import Config
-from .database.DB import db
-from .OAuth.OAuth import oauth
+import os
+from flask import Flask
+from src.config import DevelopConfig, ProductionConfig
+from src.database.DB import db
+from src.OAuth.OAuth import oauth
+from src.utils.data_serializers import marshmallow
 
 
-def create_app(config=Config):
+if os.environ.get('ENV') == 'PRODUCTION':
+    config = ProductionConfig
+else:
+    config = DevelopConfig
+    print('THIS IS DEVELOP SERVER!')
+
+
+def create_app(config_name=config):
     app = Flask(__name__)
-    app.config.from_object(config)
+    app.config.from_object(config_name)
 
     db.init_app(app)
     oauth.init_app(app)
+    marshmallow.init_app(app)
 
-    #app.register_blueprint()
+    from src.product.routes import product
+    from src.auth.routes import auth
+
+    app.register_blueprint(product)
+    app.register_blueprint(auth)
     return app
