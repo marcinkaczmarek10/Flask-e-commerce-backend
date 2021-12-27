@@ -1,5 +1,4 @@
-import json
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from src.database.DB import SessionManager
 from src.product.models import Product, Category
 from src.utils.data_serializers import ProductSchema
@@ -85,9 +84,31 @@ def create_product():
 
 @product.delete('/product/<product_id>')
 def delete_product(product_id):
-    pass
+    query = Product.query.filter_by(id=product_id).first()
+    if query:
+        with SessionManager() as session:
+            session.delete(query)
+
+        return jsonify({'message': 'Product deleted!'}), 200
+    return jsonify({'message': 'There is no product!'}), 404
 
 
 @product.put('/product/<product_id>')
 def update_product(product_id):
-    pass
+    req = request.get_json()
+    print(req)
+    if req:
+        product_update = dict(
+            name=req['name'],
+            description=req['description'],
+            price=int(req['price']),
+            category_id=int(req['category'])
+        )
+        try:
+            with SessionManager():
+                Product.query.filter_by(id=product_id).update(product_update)
+            return jsonify({'message': 'Product updated!'}), 200
+        except Exception as err:
+            abort(403, description='There is no product in db')
+            raise err
+    return jsonify({'message': 'Bad request!'}), 404

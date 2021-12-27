@@ -23,7 +23,11 @@ def create_app(config_name=config):
 
     from src.product.routes import product
     from src.auth.routes import auth
+    from src.cart.routes import cart
+    from src.order.routes import order
 
     app.register_blueprint(product)
     app.register_blueprint(auth)
+    app.register_blueprint(cart, url_prefix='/cart/')
+    app.register_blueprint(order)
     return app
