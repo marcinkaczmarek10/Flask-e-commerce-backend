@@ -1,9 +1,11 @@
 from src.database.DB import db
 from flask import current_app
+from flask_login import UserMixin
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
@@ -27,3 +29,8 @@ class User(db.Model):
 
     def __repr__(self):
         return f'User({self.username}, {self.email})'
+
+
+class OAuth(OAuthConsumerMixin, db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
+    user = db.relationship(User)

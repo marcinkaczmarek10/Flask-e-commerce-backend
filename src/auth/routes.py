@@ -1,17 +1,17 @@
-import json
-from flask import Blueprint, request, jsonify
+from flask_login import login_user, logout_user, current_user
+from flask import Blueprint, request, jsonify, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from src.auth.models import User
-from src.database.DB import SessionManager, db
-
+from src.database.DB import SessionManager
+from flask_dance.contrib.google import google
+from flask_dance.contrib.facebook import facebook
 
 auth = Blueprint('auth', __name__)
 
 
-@auth.post('/register')
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     user_data = request.get_json()
-    print(user_data)
     user_in_database = User.query.\
         filter_by(username=user_data['username'], email=user_data['email']).first()
     if user_data and not user_in_database:
@@ -34,17 +34,32 @@ def register():
     return jsonify({'message': 'No data'}), 404
 
 
-@auth.get('/login')
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
-    auth_header = request.authorization
-
-    if not auth_header or not auth_header.username or not auth_header.password:
+    if current_user.is_authenticated:
+        return redirect('/')
+    if google:
+        redirect(url_for('google.login'))
+    if facebook:
+        redirect(url_for('facebook.login'))
+    req = request.get_json()
+    if not req:
         return jsonify({'message': 'Could not verify!'}), 401
 
-    user = User.query.filter_by(username=auth_header.username).first()
+    try:
+        user = User.query.filter_by(username=req['email']).first()
+    except KeyError:
+        return jsonify({'message': 'Bad request!'}), 400
 
-    if user and check_password_hash(user.password, auth_header.password):
-        token = user.get_token()
-        return jsonify({'token': token}), 200
+    if user and check_password_hash(user.password, req['password']):
+        login_user(user, remember=req['remember'])
+        redirect_page = request.args.get('next')
+        return redirect(redirect_page) if redirect_page else jsonify({'You have been logged in': 'message'}), 200
 
     return jsonify({'message': 'Wrong password'}), 401
+
+
+@auth.get('/logout')
+def logout():
+    logout_user()
+    return jsonify({'message': 'User logged out!'}), 200
