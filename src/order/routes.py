@@ -10,5 +10,15 @@ def get_order():
 
 
 @order.post('/order')
-def post_order():
+def submit_order():
+    pass
+
+
+@order.delete('/order')
+def delete_order():
+    pass
+
+
+@order.get('/completed-order')
+def copleted_oderd:
     pass

@@ -13,7 +13,6 @@ else:
     config = DevelopConfig
     print('THIS IS DEVELOP SERVER!')
 
-print(os.environ.get('PYTHONUNBUFFERED'))
 
 def create_app(config_name=config):
     app = Flask(__name__)
@@ -28,6 +27,7 @@ def create_app(config_name=config):
     from src.auth.routes import auth
     from src.cart.routes import cart
     from src.order.routes import order
+    from src.payment.routes import payment
     from src.auth.google_oauth import google_blueprint
     from src.auth.facebook_oauth import facebook_blueprint
 
@@ -35,6 +35,7 @@ def create_app(config_name=config):
     app.register_blueprint(auth)
     app.register_blueprint(cart, url_prefix='/cart/')
     app.register_blueprint(order)
+    app.register_blueprint(payment)
     app.register_blueprint(google_blueprint, url_prefix='/google-oauth/')
     app.register_blueprint(facebook_blueprint, url_prefix='/facebook-oauth/')
     return app
