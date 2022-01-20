@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="post" action="/cart/add-item/1">
+    <button type="submit">ADD</button>
+</form>
+<button type="button" class="close" onClick="deleteResult()">
+    DELETE
+</button>
+<script>function deleteResult(){
+	fetch("/cart/delete-item/1", {
+		method: "DELETE",
+	}).then((res) => window.location.reload())
+		}</script>
+</body>
+</html>
