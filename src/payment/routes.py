@@ -82,7 +82,7 @@ def paypal_checkout():
         return jsonify({'message': err}), 400
 
 
-@payment.get('paypal-capturing-order')
+@payment.get('/paypal-capturing-order')
 def paypal_orders():
     paypal_req = OrdersCaptureRequest('APPROVED-ORDER-ID')
     try:

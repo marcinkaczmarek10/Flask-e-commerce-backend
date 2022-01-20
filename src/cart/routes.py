@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, jsonify, request, session, make_response, render_template
+from flask import Blueprint, jsonify, request, make_response, render_template
 from src.cart.models import Cart
 from src.database.DB import SessionManager
 from src.utils.data_serializers import CartSchema
@@ -28,6 +28,17 @@ def add_item_to_cart(product_id):
             sessionCM.add(cart_item)
         return jsonify({'message': 'Item added to cart!'}), 200
     resp = make_response({'message': 'Cart in session'})
+    cart_session = json.loads(request.cookies.get('cart'))
+    if cart_session['product_id'] == product_id:
+        user_cart = json.dumps({
+            'product_id': product_id,
+            'quantity': cart_session['quantity']+1
+        })
+        resp.set_cookie('cart',
+                        user_cart,
+                        secure=True,
+                        samesite='Lax')
+        return resp
     user_cart = json.dumps({
         'product_id': product_id,
         'quantity': 1
@@ -67,6 +78,7 @@ def delete_item_from_cart(product_id):
         resp.delete_cookie('cart', secure=True, httponly=True, samesite='Lax')
         return resp
     return jsonify({'message': 'Could not find product!'}), 404
+
 
 @cart.get('/get')
 def dummy_post():

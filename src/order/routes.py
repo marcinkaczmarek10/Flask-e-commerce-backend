@@ -20,5 +20,5 @@ def delete_order():
 
 
 @order.get('/completed-order')
-def copleted_oderd:
+def copleted_oderd():
     pass
