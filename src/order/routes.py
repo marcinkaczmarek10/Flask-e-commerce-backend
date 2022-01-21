@@ -6,7 +6,7 @@ order = Blueprint('order', __name__)
 
 @order.get('/order')
 def get_order():
-    pass
+    return jsonify({})
 
 
 @order.post('/order')
