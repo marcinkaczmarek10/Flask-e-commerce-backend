@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from flask_login import current_user
+from src.database.DB import SessionManager
 
 
 order = Blueprint('order', __name__)
@@ -6,19 +8,29 @@ order = Blueprint('order', __name__)
 
 @order.get('/order')
 def get_order():
+    user = current_user
+    if user.is_authenticated:
+        # handle authenticated user order
+
+        with SessionManager() as session:
+            # add order to DB
+            pass
+    else:
+        pass
+        # handle unauthenticated user order
     return jsonify({})
 
 
 @order.post('/order')
 def submit_order():
-    pass
+    return jsonify({})
 
 
 @order.delete('/order')
 def delete_order():
-    pass
+    return jsonify({})
 
 
 @order.get('/completed-order')
-def copleted_oderd():
-    pass
+def completed_order():
+    return jsonify({})
