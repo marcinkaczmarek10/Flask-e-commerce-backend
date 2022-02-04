@@ -23,6 +23,8 @@ def get_order():
 
 @order.post('/order')
 def submit_order():
+    if current_user.is_authenticated:
+        pass
     return jsonify({})
 
 
