@@ -30,6 +30,8 @@ def submit_order():
 
 @order.delete('/order')
 def delete_order():
+    if current_user.is_authenticated:
+        pass
     return jsonify({})
 
 
