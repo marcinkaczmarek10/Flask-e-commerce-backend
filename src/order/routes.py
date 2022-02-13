@@ -37,4 +37,6 @@ def delete_order():
 
 @order.get('/completed-order')
 def completed_order():
+    if current_user.is_authenticated:
+        pass
     return jsonify({})
