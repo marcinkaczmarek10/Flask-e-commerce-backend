@@ -39,4 +39,5 @@ def delete_order():
 def completed_order():
     if current_user.is_authenticated:
         pass
+    print('friend')
     return jsonify({})
