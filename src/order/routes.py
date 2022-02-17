@@ -41,3 +41,4 @@ def completed_order():
         pass
     print('friend')
     return jsonify({})
+# comment
