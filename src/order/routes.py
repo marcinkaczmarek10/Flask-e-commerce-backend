@@ -39,5 +39,6 @@ def delete_order():
 def completed_order():
     if current_user.is_authenticated:
         pass
+    print('sth')
     return jsonify({})
 # comment
