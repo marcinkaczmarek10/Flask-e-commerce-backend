@@ -42,3 +42,7 @@ def completed_order():
     print('sth')
     return jsonify({})
 # comment
+
+@order.post('/post-order')
+def create_oderd():
+    pass
